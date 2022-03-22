@@ -9,6 +9,7 @@ public class ShipTilting : MonoBehaviour
     Rigidbody shiprb;
     private Vector2 screenBounds;
     float objectWidth, objectHeight;
+    public GameObject parentForFinger;
     private void Start()
     {
         shiprb = gameObject.GetComponent<Rigidbody>();
@@ -38,6 +39,31 @@ public class ShipTilting : MonoBehaviour
 
         // Move object
         transform.Translate(dir * speed);
+
+        if (Input.touchCount > 0)
+        {
+            // The screen has been touched so store the touch
+            Touch touch = Input.GetTouch(0);
+
+            if (touch.phase == TouchPhase.Stationary)
+            {
+                Vector3 touchPosition = Camera.main.ScreenToWorldPoint(new Vector3(touch.position.x, touch.position.y, 30));
+                parentForFinger.transform.position = touchPosition;
+                gameObject.transform.parent = parentForFinger.transform;
+                // JUMP DRIVE: ship teleports to where the finger touched down
+                // TODO: FIX THIS!  It's dumb
+                //transform.position = touchPosition;
+            }
+            else if(touch.phase == TouchPhase.Moved)
+            {
+                Vector3 touchPosition = Camera.main.ScreenToWorldPoint(new Vector3(touch.position.x, touch.position.y, 30));
+                parentForFinger.transform.position = touchPosition;
+            }
+            else if(touch.phase == TouchPhase.Ended)
+            {
+                gameObject.transform.parent = null;
+            }
+        }
     }
     private void LateUpdate()
     {
