@@ -90,6 +90,7 @@ GameObject:
   - component: {fileID: 446090}
   - component: {fileID: 5499024}
   - component: {fileID: 11421226}
+  - component: {fileID: 8010007880421591563}
   m_Layer: 0
   m_Name: Asteroid 2
   m_TagString: Enemy
@@ -106,7 +107,7 @@ Transform:
   m_GameObject: {fileID: 141316}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 10, y: 10, z: 10}
   m_Children:
   - {fileID: 453352}
   m_Father: {fileID: 0}
@@ -121,12 +122,12 @@ Rigidbody:
   m_GameObject: {fileID: 141316}
   serializedVersion: 2
   m_Mass: 100
-  m_Drag: 1
+  m_Drag: 0
   m_AngularDrag: 0
   m_UseGravity: 0
   m_IsKinematic: 0
   m_Interpolate: 0
-  m_Constraints: 0
+  m_Constraints: 8
   m_CollisionDetection: 0
 --- !u!114 &11421226
 MonoBehaviour:
@@ -141,6 +142,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   tumble: 0.25
+--- !u!65 &8010007880421591563
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 141316}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 1, y: 1, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &146874
 GameObject:
   m_ObjectHideFlags: 0

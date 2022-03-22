@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using UnityEngine.UI;
 public class ShipTilting : MonoBehaviour
 {
     // Move object using accelerometer
@@ -10,12 +10,16 @@ public class ShipTilting : MonoBehaviour
     private Vector2 screenBounds;
     float objectWidth, objectHeight;
     public GameObject parentForFinger;
+    bool canShipTilt;
+    Vector3 touchStartPos;
+    Vector3 direction;
     private void Start()
     {
         shiprb = gameObject.GetComponent<Rigidbody>();
         screenBounds = Camera.main.ScreenToWorldPoint(new Vector3(Screen.width, Screen.height, Camera.main.transform.position.z));
         objectWidth = gameObject.GetComponent<BoxCollider>().size.x / 2;
         objectHeight = gameObject.GetComponent<BoxCollider>().size.y / 2;
+        canShipTilt = true;
     }
     void Update()
     {
@@ -38,14 +42,18 @@ public class ShipTilting : MonoBehaviour
         dir *= Time.deltaTime;
 
         // Move object
-        transform.Translate(dir * speed);
+        if (canShipTilt)
+        {
+
+            transform.Translate(dir * speed);
+        }
 
         if (Input.touchCount > 0)
         {
             // The screen has been touched so store the touch
             Touch touch = Input.GetTouch(0);
 
-            if (touch.phase == TouchPhase.Stationary)
+            /*if (touch.phase == TouchPhase.Began)
             {
                 Vector3 touchPosition = Camera.main.ScreenToWorldPoint(new Vector3(touch.position.x, touch.position.y, 30));
                 parentForFinger.transform.position = touchPosition;
@@ -57,11 +65,35 @@ public class ShipTilting : MonoBehaviour
             else if(touch.phase == TouchPhase.Moved)
             {
                 Vector3 touchPosition = Camera.main.ScreenToWorldPoint(new Vector3(touch.position.x, touch.position.y, 30));
-                parentForFinger.transform.position = touchPosition;
+                parentForFinger.transform.position = touchPosition*8;
             }
             else if(touch.phase == TouchPhase.Ended)
             {
                 gameObject.transform.parent = null;
+            }*/
+            switch (touch.phase)
+            {
+                //When a touch has first been detected, change the message and record the starting position
+                case TouchPhase.Began:
+                    // Record initial touch position. Save it as our touchStartPos
+                    canShipTilt = false;
+                    touchStartPos = Camera.main.ScreenToWorldPoint(new Vector3(touch.position.x, touch.position.y, 30));
+                    break;
+
+                //Determine if the touch is a moving touch
+                case TouchPhase.Moved:
+                    // Determine direction by comparing the current touch position with the initial one
+                    Vector3 touchPosition = Camera.main.ScreenToWorldPoint(new Vector3(touch.position.x, touch.position.y, 30));
+                    direction = touchPosition - touchStartPos;
+                    transform.Translate(direction*.2f);
+                    break;
+
+                case TouchPhase.Ended:
+                    // Report that the touch has ended when it ends
+                    // maybe reset the touchStartPos?
+                    // anyway, if we NEED to reset something, do it here
+                    canShipTilt = true;
+                    break;
             }
         }
     }
@@ -70,6 +102,12 @@ public class ShipTilting : MonoBehaviour
         Vector3 viewPos = transform.position;
         viewPos.x = Mathf.Clamp(viewPos.x, screenBounds.x + objectWidth, screenBounds.x * -1 - objectWidth);
         viewPos.y = Mathf.Clamp(viewPos.y, screenBounds.y + objectWidth, screenBounds.y * -1 - objectHeight);
+        viewPos.z = 0;
         transform.position = viewPos;
+    }
+
+    void OnTriggerEnter(Collider other)
+    {
+
     }
 }
