@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 public class ShipTilting : MonoBehaviour
 {
     // Move object using accelerometer
@@ -13,6 +14,12 @@ public class ShipTilting : MonoBehaviour
     bool canShipTilt;
     Vector3 touchStartPos;
     Vector3 direction;
+
+    int health = 5;
+    public Text healthTxt;
+    bool isPaused = false;
+    public GameObject pausedMenu;
+    public GameObject bullet;
     private void Start()
     {
         shiprb = gameObject.GetComponent<Rigidbody>();
@@ -20,9 +27,15 @@ public class ShipTilting : MonoBehaviour
         objectWidth = gameObject.GetComponent<BoxCollider>().size.x / 2;
         objectHeight = gameObject.GetComponent<BoxCollider>().size.y / 2;
         canShipTilt = true;
+        health = 5;
+        isPaused = false;
+        Time.timeScale = 1;
+        pausedMenu.SetActive(false);
+        InvokeRepeating("Pewpew", 0.1f, 1f);
     }
     void Update()
     {
+        healthTxt.text = health + " / 5";
         Vector3 dir = Vector3.zero;
         // we assume that the device is held parallel to the ground
         // and the Home button is in the right hand
@@ -108,6 +121,46 @@ public class ShipTilting : MonoBehaviour
 
     void OnTriggerEnter(Collider other)
     {
+        if(other.tag == "Enemy")
+        {
+            health--;
+            Destroy(other.gameObject);
+        }
+        if(health <= 0)
+        {
+            //end game
+            SceneManager.LoadScene(0);
+        }
+    }
 
+    public void PauseGame()
+    {
+        Debug.Log("Pause Game Button Pressed");
+        if (!isPaused)
+        {
+            pausedMenu.SetActive(true);
+            Time.timeScale = 0;
+            Debug.Log("We paused");
+        }
+        if (isPaused)
+        {
+            pausedMenu.SetActive(false);
+            Time.timeScale = 1;
+            Debug.Log("We play");
+        }
+            isPaused = !isPaused;
+    }
+
+    public void ReturnToMenu()
+    {
+        SceneManager.LoadScene(0);
+    }
+    void Pewpew()
+    {
+        Vector3 bulletPlace = new Vector3(gameObject.transform.position.x-6f, gameObject.transform.position.y + 50f, 0);
+        GameObject pewpewBullet = Instantiate(bullet, gameObject.transform);
+        pewpewBullet.transform.position = bulletPlace;
+        pewpewBullet.GetComponent<Rigidbody>().velocity = Vector3.up * 200f;
+        Destroy(pewpewBullet, 6f);
     }
 }

@@ -10,4 +10,12 @@ public class RandomRotator : MonoBehaviour
     {
         GetComponent<Rigidbody>().angularVelocity = Random.insideUnitSphere * tumble;
     }
+    private void OnTriggerEnter(Collider other)
+    {
+        if(other.tag == "bullet")
+        {
+            Destroy(other.gameObject);
+            Destroy(gameObject);
+        }
+    }
 }
